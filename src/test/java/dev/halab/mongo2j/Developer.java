@@ -11,11 +11,8 @@ import java.util.Map;
 /**
  * @author Apollo
  */
-public class Developer {
+public class Developer extends Person {
 
-    @DocumentId
-    private String id;
-    private String name;
     private int age;
     private Address address;
     @DocumentField(name = "skills")
@@ -23,22 +20,6 @@ public class Developer {
 
     public Developer() {
         languages = new ArrayList<>();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getAge() {
@@ -68,8 +49,8 @@ public class Developer {
     @Override
     public String toString() {
         return "Developer{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                "id='" + getId() + '\'' +
+                ", name='" + getName() + '\'' +
                 ", age=" + age +
                 ", address=" + address +
                 ", languages=" + languages +

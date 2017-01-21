@@ -26,6 +26,17 @@ public final class Validator {
 
 
     /**
+     * Return <i>true</i> if object is not null
+     *
+     * @param object object
+     * @return <i>true</i> if object is not null
+     */
+    public static boolean isNotNull(Object object) {
+        return object != null;
+    }
+
+
+    /**
      * Return <i>true</i> if collection is not empty
      *
      * @param collection collection

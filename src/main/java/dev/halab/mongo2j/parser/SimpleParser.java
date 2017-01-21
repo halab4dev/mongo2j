@@ -37,6 +37,13 @@ public class SimpleParser implements Parser {
         return INSTANCE;
     }
 
+
+    /**
+     * Parse java object to mongo document
+     *
+     * @param object java object
+     * @return mongo document parsed from java object
+     */
     public Document toDocument(Object object) {
 
         if (Validator.isNull(object)) {
@@ -46,7 +53,8 @@ public class SimpleParser implements Parser {
         Document document = new Document();
 
         Class clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
+        List<Field> fields = getSuperClassField(clazz);
+        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         for (Field field : fields) {
             try {
                 addDocumentField(document, field, object);
@@ -56,6 +64,23 @@ public class SimpleParser implements Parser {
         }
 
         return document;
+    }
+
+
+    /**
+     * Get all super class fields
+     *
+     * @param clazz sub class
+     * @return list of super class fields
+     */
+    private List<Field> getSuperClassField(Class clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class superClass = clazz.getSuperclass();
+        if (Validator.isNotNull(superClass)) {
+            fields.addAll(getSuperClassField(superClass));
+            fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
+        }
+        return fields;
     }
 
 
@@ -133,6 +158,12 @@ public class SimpleParser implements Parser {
     }
 
 
+    /**
+     * Parse java collection to mongo db list
+     *
+     * @param collection java collection
+     * @return mongo db list parsed from java collection
+     */
     public BasicDBList toDBList(Collection collection) {
         BasicDBList dbList = new BasicDBList();
         if (Validator.isNotEmpty(collection)) {
@@ -149,6 +180,13 @@ public class SimpleParser implements Parser {
     }
 
 
+    /**
+     * Parse mongo document to java object
+     *
+     * @param document mongo document
+     * @param clazz    class of java object
+     * @return java object parsed from mongo document
+     */
     public Object toObject(Document document, Class clazz) {
         if (Validator.isNull(document)) {
             return null;
@@ -157,7 +195,8 @@ public class SimpleParser implements Parser {
         Object object;
         try {
             object = clazz.newInstance();
-            Field[] fields = clazz.getDeclaredFields();
+            List<Field> fields = getSuperClassField(clazz);
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
             for (Field field : fields) {
                 setObjectField(object, field, document);
             }

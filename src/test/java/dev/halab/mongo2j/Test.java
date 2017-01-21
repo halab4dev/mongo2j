@@ -1,5 +1,8 @@
 package dev.halab.mongo2j;
 
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import dev.halab.mongo2j.parser.Parser;
 import dev.halab.mongo2j.parser.SimpleParser;
 import org.bson.Document;
@@ -28,7 +31,7 @@ public class Test {
         Document document = parser.toDocument(developer);
         System.out.println(document);
 
-        Developer clone = (Developer)parser.toObject(document, Developer.class);
+        Developer clone = (Developer) parser.toObject(document, Developer.class);
         System.out.println(developer);
         System.out.println(clone);
     }
