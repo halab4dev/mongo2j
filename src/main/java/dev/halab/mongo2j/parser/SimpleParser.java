@@ -320,7 +320,7 @@ public class SimpleParser implements Parser {
                 break;
             case PRIMITIVE_LONG:
             case LONG:
-                field.set(object, document.getInteger(fieldName).longValue());
+                field.set(object, document.getLong(fieldName));
                 break;
             case PRIMITIVE_FLOAT:
             case FLOAT:
