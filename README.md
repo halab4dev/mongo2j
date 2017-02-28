@@ -2,7 +2,7 @@
 Mongo2J is a light weight and easy to use library to parse mongo document to java object and vice versa.
 
 To start using Mongo2J, just download 
-[mongo2j-1.0.0.jar](https://github.com/halab4dev/mongo2j/releases/download/v1.0.0/mongo2j-1.0.0.jar)
+[mongo2j-1.0.1.jar](https://github.com/halab4dev/mongo2j/releases/download/v1.0.1/mongo2j-1.0.1.jar)
 and import it to your project as a library.
 
 ## Guideline
