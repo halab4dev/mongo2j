@@ -16,8 +16,10 @@ pipeline {
         }
         stage('List target file') {
           steps {
-            sh 'cd target'
-            sh 'ls'
+            dir(path: './target') {
+              sh 'ls'
+            }
+
           }
         }
       }
