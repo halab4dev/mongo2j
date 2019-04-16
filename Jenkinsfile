@@ -6,7 +6,7 @@ pipeline {
          jdk "jdk-1.8.212"
       }
       steps {
-        sh 'cho java -version'
+        sh 'echo java -version'
         sh 'mvn clean install'
       }
     }
