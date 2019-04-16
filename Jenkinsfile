@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build') {
       tools {
-         jdk "jdk-1.8.212"
+         jdk "JDK 8"
       }
       steps {
         sh 'echo java -version'
