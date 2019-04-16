@@ -7,18 +7,30 @@ pipeline {
         sh 'mvn clean install'
       }
     }
-    stage('Deploy to Staging') {
+    stage('List files') {
       parallel {
-        stage('Deploy to Staging') {
+        stage('List files') {
           steps {
-            sh 'echo "Deploying to Staging"'
+            sh 'ls'
           }
         }
-        stage('Deploy to Production') {
+        stage('List target file') {
           steps {
-            sh 'echo "Deploy to Production"'
+            sh 'cd target'
+            sh 'ls'
           }
         }
+      }
+    }
+    stage('Deploy to Staging') {
+      steps {
+        sh 'echo "Deploy to Staging"'
+      }
+    }
+    stage('Deploy to Production') {
+      steps {
+        input 'Do you want to deploy to Production?'
+        sh 'echo "Deploy to Production"'
       }
     }
   }
