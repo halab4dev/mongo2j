@@ -12,4 +12,7 @@ pipeline {
       }
     }
   }
+  environment {
+    JAVA_HOME = '/docker-java-home'
+  }
 }
