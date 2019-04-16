@@ -2,13 +2,12 @@ pipeline {
   agent any
   stages {
     stage('Build') {
+      tools {
+         jdk "jdk-1.8.212"
+      }
       steps {
-        sh '''
-          echo $JAVA_HOME
-          echo java -version
-          echo mvn --version
-          mvn clean install
-          '''
+        sh 'cho java -version'
+        sh 'mvn clean install'
       }
     }
   }
