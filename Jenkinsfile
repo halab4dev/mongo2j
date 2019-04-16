@@ -31,7 +31,7 @@ pipeline {
     }
     stage('Deploy to Production') {
       steps {
-        input 'Do you want to deploy to Production?'
+        input(message: 'Do you want to deploy to Production?', submitter: 'halab')
         sh 'echo "Deploy to Production"'
       }
     }
