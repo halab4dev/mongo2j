@@ -1,10 +1,7 @@
-package dev.halab.mongo2j.util;
+package com.github.halab4dev.mongo2j.util;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Provides methods to work with class
@@ -40,6 +37,11 @@ public final class ClassUtils {
      */
     public static boolean isSimpleValue(Field field) {
         Class fieldClass = field.getType();
+        return fieldClass.isPrimitive() || SIMPLE_VALUE_CLASSES.contains(fieldClass);
+    }
+
+    public static boolean isSimpleValue(Object object) {
+        Class fieldClass = object.getClass();
         return fieldClass.isPrimitive() || SIMPLE_VALUE_CLASSES.contains(fieldClass);
     }
 
@@ -85,5 +87,22 @@ public final class ClassUtils {
      */
     public static boolean isWrappedClass(Class clazz) {
         return SIMPLE_VALUE_CLASSES.contains(clazz);
+    }
+
+
+    /**
+     * Get all super class fields
+     *
+     * @param clazz sub class
+     * @return list of super class fields
+     */
+    public static List<Field> getSuperClassField(Class clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class superClass = clazz.getSuperclass();
+        if (Validator.isNotNull(superClass)) {
+            fields.addAll(getSuperClassField(superClass));
+            fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
+        }
+        return fields;
     }
 }

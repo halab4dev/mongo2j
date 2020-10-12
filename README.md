@@ -1,9 +1,18 @@
-## Overview & Installation
-Mongo2J is a light weight and easy to use library to parse mongo document to java object and vice versa.
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/halab4dev/mongo2j/Java%20CI%20with%20Maven)
+[![Coverage Status](https://coveralls.io/repos/github/halab4dev/mongo2j/badge.svg?branch=master)](https://coveralls.io/github/halab4dev/mongo2j?branch=master)
+![GitHub last commit](https://img.shields.io/github/last-commit/halab4dev/mongo2j)
 
-To start using Mongo2J, just download 
-[mongo2j-1.0.1.jar](https://github.com/halab4dev/mongo2j/releases/download/v1.0.1/mongo2j-1.0.1.jar)
-and import it to your project as a library.
+## Overview & Installation
+Mongo2J is a light weight and easy to use library to map mongo document to java object and vice versa.
+
+To start using Mongo2J, add dependency to `pom.xml` file:
+```xml
+<dependency>
+  <groupId>com.github.halab4dev</groupId>
+  <artifactId>mongo2j</artifactId>
+  <version>2.0</version>
+</dependency>
+```
 
 ## Guideline
 
@@ -11,12 +20,12 @@ and import it to your project as a library.
 ``` java
 public class Developer {
 
-    @DocumentId
+    @BsonId
     private String id;
     private String name;
     private int age;
     private Address address;
-    @DocumentField(name = "skills")
+    @BsonProperty("skills")
     private List<String> languages;
 ...
 }
@@ -31,10 +40,10 @@ public class Address {
 }
 ```
 * Annotations
-  * `@DocumentId`: mark a class attribute as the document id.
-  * `@DocumentField`: tell the parser to parse this attribute to specific document field (here is `skills`)
+  * `@BsonId`: mark a class attribute as the document id.
+  * `@BsonProperty`: tell the parser to parse this attribute to specific document field (here is `skills`)
   
-* Parsing
+* Mapping
 ```java
     //Create java objects
     Address address = new Address();
@@ -50,11 +59,11 @@ public class Address {
     developer.getLanguages().add("Java");
     developer.getLanguages().add("Javasccript");
 
-    //Declare parser
-    Parser parser = SimpleParser.getInstance();
+    //Declare mapper
+    Mapper mapper = new DefaultMapper();
 
-    //Parse an object to mongo document
-    Document document = parser.toDocument(developer);
+    //Map an object to mongo document
+    Document document = mapper.toDocument(developer);
 ```
 The result should be:
 ```
@@ -73,7 +82,7 @@ The result should be:
     ]
 }
 ```
-To parse a document to java object, just simple:
+To map a document to java object, just simple:
 ```java
-Developer dev = (Developer)parser.toObject(document, Developer.class);
+Developer dev = mapper.toObject(document, Developer.class);
 ```
