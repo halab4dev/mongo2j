@@ -1,17 +1,24 @@
-package dev.halab.mongo2j;
+package com.github.halab4dev.mongo2j.mapper;
 
-import dev.halab.mongo2j.annotation.DocumentId;
+import com.github.halab4dev.mongo2j.annotation.BsonId;
 
-/**
- * @author Apollo
+/*
+ *
+ * @author halab
  */
-public class Person {
+public class StringIdAttributeExample {
 
-    @DocumentId
+    @BsonId
     private String id;
+
     private String name;
 
-    public Person() {
+    public StringIdAttributeExample() {
+    }
+
+    public StringIdAttributeExample(String id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public String getId() {
@@ -32,7 +39,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "StringIdAttributeExample{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 '}';

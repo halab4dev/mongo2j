@@ -1,17 +1,17 @@
-package dev.halab.mongo2j.annotation;
+package com.github.halab4dev.mongo2j.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Mark a class attribute to map it with _id field of mongo document
+/*
  *
- * @author Apollo
+ * @author halab
  */
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface DocumentId {
+@Retention(RetentionPolicy.RUNTIME)
+public @interface BsonProperty {
 
+    String value() default "";
 }
