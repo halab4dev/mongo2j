@@ -20,7 +20,6 @@ public class DefaultMapperAnnotatedAttributeTests {
         AnnotatedAttributeExample object =
                 new AnnotatedAttributeExample("normal", "empty", "annotated");
         Document document = mapper.toDocument(object);
-        System.out.println(document.toJson());
 
         assertEquals(object.getNormalAttribute(), document.getString("normalAttribute"));
         assertEquals(object.getEmptyAnnotatedAttribute(), document.getString("emptyAnnotatedAttribute"));

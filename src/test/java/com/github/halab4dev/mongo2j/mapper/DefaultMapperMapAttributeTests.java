@@ -31,7 +31,6 @@ public class DefaultMapperMapAttributeTests {
         MapAttributeExample object = new MapAttributeExample(simpleTypeMap, complexMap);
 
         Document document = mapper.toDocument(object);
-        System.out.println(document.toJson());
 
         assertEquals(object.getSimpleTypeMap().get("key1"),
                 ((Document)document.get("simpleTypeMap")).get("key1"));
@@ -51,9 +50,7 @@ public class DefaultMapperMapAttributeTests {
                 new Document("key1", 1).append("key2", 2))
                 .append("complexMap", new Document("keyA", new Document("charAttribute", 'A'))
                         .append("keyB", new Document("charAttribute",'B')));
-        System.out.println(document.toJson());
         MapAttributeExample object = mapper.toObject(document, MapAttributeExample.class);
-        System.out.println(object);
 
         assertEquals(((Document)document.get("simpleTypeMap")).get("key1"),
                 object.getSimpleTypeMap().get("key1"));

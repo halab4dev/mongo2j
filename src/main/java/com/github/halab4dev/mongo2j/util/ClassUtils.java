@@ -45,6 +45,17 @@ public final class ClassUtils {
         return fieldClass.isPrimitive() || SIMPLE_VALUE_CLASSES.contains(fieldClass);
     }
 
+    /**
+     * Return <i>true</i> if field is primitive type or wrapped class
+     *
+     * @param field class attribute
+     * @return <i>true</i> if field is primitive type or wrapped class
+     */
+    public static boolean isDate(Field field) {
+        Class<?> fieldClass = field.getType();
+        return fieldClass.isAssignableFrom(Date.class);
+    }
+
 
     /**
      * Return <i>true</i> if field is a collection

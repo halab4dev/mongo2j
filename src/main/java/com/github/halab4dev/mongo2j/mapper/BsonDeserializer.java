@@ -61,6 +61,9 @@ public class BsonDeserializer {
         } else if (ClassUtils.isSimpleValue(field)) {
             setSimpleValueField(object, field, document);
 
+        } else if (ClassUtils.isDate(field)) {
+            setDateValueField(object, field, document);
+
         } else if (ClassUtils.isCollection(field)) {
             setCollectionField(object, field, document);
 
@@ -160,6 +163,21 @@ public class BsonDeserializer {
                 field.set(object, document.getDouble(fieldName));
                 break;
         }
+    }
+
+
+    /**
+     * Set value for date attribute
+     *
+     * @param object   java object
+     * @param field    class attribute
+     * @param document mongo document
+     * @throws IllegalAccessException when can not access class attribute
+     */
+    private void setDateValueField(Object object, Field field, Document document) throws IllegalAccessException {
+        String fieldName = BsonUtils.getDocumentFieldName(field);
+        Date date= document.getDate(fieldName);
+        field.set(object, date);
     }
 
 

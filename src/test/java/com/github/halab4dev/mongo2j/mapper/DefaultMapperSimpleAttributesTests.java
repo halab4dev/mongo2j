@@ -44,7 +44,6 @@ public class DefaultMapperSimpleAttributesTests {
         object.setCharAttribute('a');
 
         Document document = mapper.toDocument(object);
-        System.out.println(document);
 
         assertEquals(object.isBooleanAttribute(), document.getBoolean("booleanAttribute"));
         assertEquals(object.getByteAttribute(), (byte) document.get("byteAttribute"));
@@ -70,7 +69,6 @@ public class DefaultMapperSimpleAttributesTests {
                 .append("charAttribute", 'a');
 
         PrimitiveAttributesExample object = mapper.toObject(document, PrimitiveAttributesExample.class);
-        System.out.println(object);
 
         assertTrue(object.isBooleanAttribute());
         assertEquals((byte) 1, object.getByteAttribute());
@@ -96,7 +94,6 @@ public class DefaultMapperSimpleAttributesTests {
         object.setCharAttribute('a');
 
         Document document = mapper.toDocument(object);
-        System.out.println(document);
 
         assertEquals(object.isBooleanAttribute(), document.getBoolean("booleanAttribute"));
         assertEquals(object.getByteAttribute(), (byte) document.get("byteAttribute"));
@@ -122,7 +119,6 @@ public class DefaultMapperSimpleAttributesTests {
                 .append("charAttribute", 'a');
 
         PrimitiveAttributesExample object = mapper.toObject(document, PrimitiveAttributesExample.class);
-        System.out.println(object);
 
         assertTrue(object.isBooleanAttribute());
         assertEquals((byte) 1, object.getByteAttribute());

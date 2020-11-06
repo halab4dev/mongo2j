@@ -67,6 +67,9 @@ public class BsonSerializer {
         } else if (ClassUtils.isSimpleValue(field)) {
             document.append(fieldName, field.get(object));
 
+        } else if (ClassUtils.isDate(field)) {
+            document.append(fieldName, field.get(object));
+
         } else if (ClassUtils.isCollection(field)) {
             document.append(fieldName, toDocumentList((Collection<?>) field.get(object)));
 

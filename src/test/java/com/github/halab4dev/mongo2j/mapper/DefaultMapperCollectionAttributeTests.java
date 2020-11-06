@@ -24,7 +24,6 @@ public class DefaultMapperCollectionAttributeTests {
         object.setSet(elements);
 
         Document document = mapper.toDocument(object);
-        System.out.println(document);
 
         List<Document> documentElements = document.getList("set", Document.class);
         assertEquals(0, documentElements.size());
