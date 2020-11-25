@@ -26,7 +26,8 @@ public class DefaultMapperSimpleAttributesTests {
     @Test
     @DisplayName("Test deserialize with null document")
     public void testDeserializeNullDocument() {
-        Object object = mapper.toObject(null, Object.class);
+        Document document = null;
+        Object object = mapper.toObject(document, Object.class);
         assertNull(object);
     }
 
@@ -128,5 +129,16 @@ public class DefaultMapperSimpleAttributesTests {
         assertEquals(50F, object.getFloatAttribute());
         assertEquals(100D, object.getDoubleAttribute());
         assertEquals('a', object.getCharAttribute());
+    }
+
+    @Test
+    @DisplayName("Test serialize with static final attributes")
+    public void testStaticFinalAttribute() {
+        PrimitiveAttributesExample object = new PrimitiveAttributesExample();
+        object.setBooleanAttribute(true);
+
+        Document document = mapper.toDocument(object);
+        assertTrue(object.isBooleanAttribute());
+        assertNull(document.getString("STATIC_FINAL"));
     }
 }

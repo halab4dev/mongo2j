@@ -14,4 +14,5 @@ import java.lang.annotation.Target;
 public @interface BsonProperty {
 
     String value() default "";
+    boolean isObjectId() default false;
 }

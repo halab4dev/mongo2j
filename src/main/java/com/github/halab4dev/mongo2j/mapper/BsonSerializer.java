@@ -1,7 +1,6 @@
 package com.github.halab4dev.mongo2j.mapper;
 
 import com.github.halab4dev.mongo2j.annotation.BsonId;
-import com.github.halab4dev.mongo2j.util.BsonUtils;
 import com.github.halab4dev.mongo2j.util.ClassUtils;
 import com.github.halab4dev.mongo2j.util.Validator;
 import org.bson.Document;
@@ -14,7 +13,7 @@ import java.util.*;
  *
  * @author halab
  */
-public class BsonSerializer {
+public class BsonSerializer extends BsonProcessor {
 
     private static final String ID = "_id";
 
@@ -53,7 +52,11 @@ public class BsonSerializer {
             return;
         }
 
-        String fieldName = BsonUtils.getDocumentFieldName(field);
+        if(ClassUtils.isStaticFinal(field)) {
+            return;
+        }
+
+        String fieldName = getDocumentFieldName(field);
         if (field.isAnnotationPresent(BsonId.class)) {
             BsonId idAnnotation = field.getDeclaredAnnotation(BsonId.class);
             Class<?> type = idAnnotation.value();
@@ -63,6 +66,10 @@ public class BsonSerializer {
             } else {
                 document.append(ID, field.get(object));
             }
+
+        } else if(isAnnotatedObjectId(field)) {
+            ObjectId objectId = createObjectId(field.get(object), field.getType());
+            document.append(fieldName, objectId);
 
         } else if (ClassUtils.isSimpleValue(field)) {
             document.append(fieldName, field.get(object));
@@ -105,7 +112,7 @@ public class BsonSerializer {
         List result = new ArrayList<>();
 
         for(Object object : collection) {
-            if (ClassUtils.isWrappedClass(object)) {
+            if (ClassUtils.isStringOrWrappedClass(object)) {
                 result.add(object);
             } else {
                 Document document = toDocument(object);

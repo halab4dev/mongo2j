@@ -1,6 +1,7 @@
 package com.github.halab4dev.mongo2j.mapper;
 
 import com.github.halab4dev.mongo2j.annotation.BsonId;
+import com.github.halab4dev.mongo2j.annotation.BsonProperty;
 import org.bson.types.ObjectId;
 
 /*
@@ -14,12 +15,16 @@ public class ObjectIdAttributeExample {
 
     private String name;
 
+    @BsonProperty(value = "other_object_id", isObjectId = true)
+    private ObjectId otherObjectId;
+
     public ObjectIdAttributeExample() {
     }
 
-    public ObjectIdAttributeExample(ObjectId objectId, String name) {
+    public ObjectIdAttributeExample(ObjectId objectId, String name, ObjectId otherObjectId) {
         this.objectId = objectId;
         this.name = name;
+        this.otherObjectId = otherObjectId;
     }
 
     public ObjectId getObjectId() {
@@ -38,11 +43,20 @@ public class ObjectIdAttributeExample {
         this.name = name;
     }
 
+    public ObjectId getOtherObjectId() {
+        return otherObjectId;
+    }
+
+    public void setOtherObjectId(ObjectId otherObjectId) {
+        this.otherObjectId = otherObjectId;
+    }
+
     @Override
     public String toString() {
         return "ObjectIdAttributeExample{" +
                 "objectId=" + objectId +
                 ", name='" + name + '\'' +
+                ", otherObjectId=" + otherObjectId +
                 '}';
     }
 }

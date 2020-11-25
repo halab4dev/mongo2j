@@ -1,7 +1,6 @@
 package com.github.halab4dev.mongo2j.mapper;
 
 import com.github.halab4dev.mongo2j.annotation.BsonId;
-import com.github.halab4dev.mongo2j.util.BsonUtils;
 import com.github.halab4dev.mongo2j.util.ClassUtils;
 import com.github.halab4dev.mongo2j.util.Validator;
 import org.bson.Document;
@@ -12,12 +11,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
  *
  * @author halab
  */
-public class BsonDeserializer {
+public class BsonDeserializer extends BsonProcessor {
 
     private static final String ID = "_id";
 
@@ -56,7 +58,11 @@ public class BsonDeserializer {
         field.setAccessible(true);
 
         if (field.isAnnotationPresent(BsonId.class)) {
-            setObjectIdField(object, field, document);
+            setObjectIdField(object, field, document, ID);
+
+        } else if(isAnnotatedObjectId(field)) {
+            String fieldName = getDocumentFieldName(field);
+            setObjectIdField(object, field, document, fieldName);
 
         } else if (ClassUtils.isSimpleValue(field)) {
             setSimpleValueField(object, field, document);
@@ -83,8 +89,8 @@ public class BsonDeserializer {
      * @param document mongo document
      * @throws IllegalAccessException when can not access class attribute
      */
-    private void setObjectIdField(Object object, Field field, Document document) throws IllegalAccessException {
-        ObjectId objectId = document.getObjectId(ID);
+    private void setObjectIdField(Object object, Field field, Document document, String fieldName) throws IllegalAccessException {
+        ObjectId objectId = document.getObjectId(fieldName);
         if (Validator.isNull(objectId)) {
             return;
         }
@@ -126,7 +132,7 @@ public class BsonDeserializer {
      * @throws IllegalAccessException when can not access class attribute
      */
     private void setSimpleValueField(Object object, Field field, Document document) throws IllegalAccessException {
-        String fieldName = BsonUtils.getDocumentFieldName(field);
+        String fieldName = getDocumentFieldName(field);
         if (Validator.isNull(document.get(fieldName))) {
             return;
         }
@@ -175,7 +181,7 @@ public class BsonDeserializer {
      * @throws IllegalAccessException when can not access class attribute
      */
     private void setDateValueField(Object object, Field field, Document document) throws IllegalAccessException {
-        String fieldName = BsonUtils.getDocumentFieldName(field);
+        String fieldName = getDocumentFieldName(field);
         Date date= document.getDate(fieldName);
         field.set(object, date);
     }
@@ -191,7 +197,7 @@ public class BsonDeserializer {
      */
     @SuppressWarnings("unchecked")
     private void setCollectionField(Object object, Field field, Document document) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        String fieldName = BsonUtils.getDocumentFieldName(field);
+        String fieldName = getDocumentFieldName(field);
         ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
         Class<?> elementType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
@@ -199,7 +205,7 @@ public class BsonDeserializer {
             Set<Document> dbSet = document.get(fieldName, new HashSet<>());
             Set collection = createNewSetInstance(field);
             for (Object dbObject : dbSet) {
-                if (ClassUtils.isWrappedClass(elementType)) {
+                if (ClassUtils.isStringOrWrappedClass(elementType)) {
                     collection.add(dbObject);
                 } else {
                     collection.add(toObject((Document) dbObject, elementType));
@@ -210,7 +216,7 @@ public class BsonDeserializer {
             List<Document> dbList = document.get(fieldName, new ArrayList<>());
             List collection = createNewListInstance(field);
             for (Object dbObject : dbList) {
-                if (ClassUtils.isWrappedClass(elementType)) {
+                if (ClassUtils.isStringOrWrappedClass(elementType)) {
                     collection.add(dbObject);
                 } else {
                     collection.add(toObject((Document) dbObject, elementType));
@@ -225,6 +231,8 @@ public class BsonDeserializer {
             return new TreeSet<>();
         } else if (LinkedHashSet.class.isAssignableFrom(field.getType())) {
             return new LinkedHashSet<>();
+        } else if (ConcurrentSkipListSet.class.isAssignableFrom(field.getType())) {
+            return new ConcurrentSkipListSet<>();
         } else {
             return new HashSet<>();
         }
@@ -237,6 +245,8 @@ public class BsonDeserializer {
             return new Vector<>();
         } else if (LinkedList.class.isAssignableFrom(field.getType())) {
             return new LinkedList<>();
+        } else if (CopyOnWriteArrayList.class.isAssignableFrom(field.getType())) {
+            return new CopyOnWriteArrayList<>();
         } else {
             return new ArrayList<>();
         }
@@ -253,7 +263,7 @@ public class BsonDeserializer {
      */
     @SuppressWarnings("unchecked")
     private void setMapField(Object object, Field field, Document document) throws IllegalAccessException, ClassNotFoundException {
-        String fieldName = BsonUtils.getDocumentFieldName(field);
+        String fieldName = getDocumentFieldName(field);
         Document subDocument = (Document) document.get(fieldName);
 
         field.setAccessible(true);
@@ -261,19 +271,31 @@ public class BsonDeserializer {
         Type type = parameterizedType.getActualTypeArguments()[1];
         Class<?> clazz = Class.forName(type.getTypeName());
 
-        Map map = new HashMap();
-        subDocument.entrySet().forEach(entry ->{
-            String key = entry.getKey();
-            Object value = entry.getValue();
+        Map map = createNewMapInstance(field);
+        subDocument.forEach((key, value) -> {
 
             if (ClassUtils.isSimpleValue(value)) {
                 map.put(key, value);
             } else {
-                map.put(key, toObject((Document)value, clazz));
+                map.put(key, toObject((Document) value, clazz));
             }
 
         });
         field.set(object, map);
+    }
+
+    private Map<?,?> createNewMapInstance(Field field) {
+        if (SortedMap.class.isAssignableFrom(field.getType())) {
+            return new TreeMap<>();
+        } else if (Hashtable.class.isAssignableFrom(field.getType())) {
+            return new Hashtable<>();
+        } else if (LinkedHashMap.class.isAssignableFrom(field.getType())) {
+            return new LinkedHashMap<>();
+        } else if (ConcurrentHashMap.class.isAssignableFrom(field.getType())) {
+            return new ConcurrentHashMap<>();
+        } else {
+            return new HashMap<>();
+        }
     }
 
 
@@ -287,7 +309,7 @@ public class BsonDeserializer {
      * @throws IllegalAccessException when can not access class attribute
      */
     private void setComplexValueField(Object object, Field field, Document document) throws IllegalAccessException {
-        String fieldName = BsonUtils.getDocumentFieldName(field);
+        String fieldName = getDocumentFieldName(field);
         Class<?> fieldClass = field.getType();
         Object subObject = fieldClass.cast(toObject((Document) document.get(fieldName), fieldClass));
         field.set(object, subObject);

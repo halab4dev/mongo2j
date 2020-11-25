@@ -1,6 +1,8 @@
 package com.github.halab4dev.mongo2j.mapper;
 
 import com.github.halab4dev.mongo2j.annotation.BsonId;
+import com.github.halab4dev.mongo2j.annotation.BsonProperty;
+import org.bson.types.ObjectId;
 
 /*
  *
@@ -13,12 +15,16 @@ public class StringIdAttributeExample {
 
     private String name;
 
+    @BsonProperty(value = "string_id", isObjectId = true)
+    private String stringId;
+
     public StringIdAttributeExample() {
     }
 
-    public StringIdAttributeExample(String id, String name) {
-        this.id = id;
+    public StringIdAttributeExample(String objectId, String name, String stringId) {
+        this.id = objectId;
         this.name = name;
+        this.stringId = stringId;
     }
 
     public String getId() {
@@ -37,11 +43,20 @@ public class StringIdAttributeExample {
         this.name = name;
     }
 
+    public String getStringId() {
+        return stringId;
+    }
+
+    public void setStringId(String stringId) {
+        this.stringId = stringId;
+    }
+
     @Override
     public String toString() {
         return "StringIdAttributeExample{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", stringId='" + stringId + '\'' +
                 '}';
     }
 }

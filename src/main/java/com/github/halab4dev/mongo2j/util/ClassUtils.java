@@ -1,7 +1,9 @@
 package com.github.halab4dev.mongo2j.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Provides methods to work with class
@@ -36,12 +38,12 @@ public final class ClassUtils {
      * @return <i>true</i> if field is primitive type or wrapped class
      */
     public static boolean isSimpleValue(Field field) {
-        Class fieldClass = field.getType();
+        Class<?> fieldClass = field.getType();
         return fieldClass.isPrimitive() || SIMPLE_VALUE_CLASSES.contains(fieldClass);
     }
 
     public static boolean isSimpleValue(Object object) {
-        Class fieldClass = object.getClass();
+        Class<?> fieldClass = object.getClass();
         return fieldClass.isPrimitive() || SIMPLE_VALUE_CLASSES.contains(fieldClass);
     }
 
@@ -85,7 +87,7 @@ public final class ClassUtils {
      * @param object object
      * @return <i>true</i> if object class is wrapped class
      */
-    public static boolean isWrappedClass(Object object) {
+    public static boolean isStringOrWrappedClass(Object object) {
         return SIMPLE_VALUE_CLASSES.contains(object.getClass());
     }
 
@@ -96,7 +98,7 @@ public final class ClassUtils {
      * @param clazz class
      * @return <i>true</i> if class is wrapped class
      */
-    public static boolean isWrappedClass(Class clazz) {
+    public static boolean isStringOrWrappedClass(Class<?> clazz) {
         return SIMPLE_VALUE_CLASSES.contains(clazz);
     }
 
@@ -107,13 +109,18 @@ public final class ClassUtils {
      * @param clazz sub class
      * @return list of super class fields
      */
-    public static List<Field> getSuperClassField(Class clazz) {
+    public static List<Field> getSuperClassField(Class<?> clazz) {
         List<Field> fields = new ArrayList<>();
-        Class superClass = clazz.getSuperclass();
+        Class<?> superClass = clazz.getSuperclass();
         if (Validator.isNotNull(superClass)) {
             fields.addAll(getSuperClassField(superClass));
             fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
         }
-        return fields;
+        return fields.stream().filter(field -> !field.isSynthetic()).collect(Collectors.toList());
+    }
+
+    public static boolean isStaticFinal(Field field) {
+        int modifier = field.getModifiers();
+        return Modifier.isStatic(modifier) && Modifier.isFinal(modifier);
     }
 }

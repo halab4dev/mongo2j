@@ -6,6 +6,8 @@ package com.github.halab4dev.mongo2j.mapper;
  */
 public class PrimitiveAttributesExample {
 
+    public static final String STATIC_FINAL = "static final";
+
     private boolean booleanAttribute;
     private byte byteAttribute;
     private short shortAttribute;

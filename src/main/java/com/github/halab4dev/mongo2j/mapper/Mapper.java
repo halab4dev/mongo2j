@@ -2,9 +2,6 @@ package com.github.halab4dev.mongo2j.mapper;
 
 import org.bson.Document;
 
-import java.util.Collection;
-import java.util.List;
-
 /*
  *
  * @author halab
