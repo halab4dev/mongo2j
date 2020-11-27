@@ -119,6 +119,16 @@ public final class ClassUtils {
         return fields.stream().filter(field -> !field.isSynthetic()).collect(Collectors.toList());
     }
 
+    /**
+     * Get all class fields
+     *
+     * @param clazz class
+     * @return list of class fields
+     */
+    public static List<Field> getClassField(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields()).filter(field -> !field.isSynthetic() && !isStaticFinal(field)).collect(Collectors.toList());
+    }
+
     public static boolean isStaticFinal(Field field) {
         int modifier = field.getModifiers();
         return Modifier.isStatic(modifier) && Modifier.isFinal(modifier);

@@ -125,8 +125,21 @@ public class ClassUtilsTests {
         List<Field> fields = ClassUtils.getSuperClassField(ColorfulObject.class);
         List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
         List<String> expectedFieldNames = Arrays.asList("grandParent", "parent");
-        System.out.println(fieldNames);
-        System.out.println(expectedFieldNames);
+        fieldNames.forEach(fieldName -> assertTrue(expectedFieldNames.contains(fieldName)));
+    }
+
+    @Test
+    @DisplayName("Test get class field")
+    public void testGetClassFields() {
+        List<Field> fields = ClassUtils.getClassField(ColorfulObject.class);
+        List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
+        List<String> expectedFieldNames = Arrays.asList("smallByte", "smallShort", "smallInt", "smallLong",
+                "smallFloat", "smallDouble", "smallChar", "smallBoolean",
+                "bigByte", "bigShort", "bigInt", "bigLong",
+                "bigFloat", "bigDouble", "bigChar", "bigBoolean",
+                "string", "date", "map", "hashMap", "colorful",
+                "list", "arrayList", "linkedList", "stack", "vector",
+                "set", "hashSet", "linkedHashSet", "sortedSet", "treeSet");
         fieldNames.forEach(fieldName -> assertTrue(expectedFieldNames.contains(fieldName)));
     }
 

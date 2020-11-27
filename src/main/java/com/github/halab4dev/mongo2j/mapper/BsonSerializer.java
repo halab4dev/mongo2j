@@ -25,8 +25,11 @@ public class BsonSerializer extends BsonProcessor {
         Document document = new Document();
 
         Class<?> clazz = object.getClass();
-        List<Field> fields = ClassUtils.getSuperClassField(clazz);
-        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+        List<Field> fields = new ArrayList<>();
+        List<Field> superClassFields = ClassUtils.getSuperClassField(clazz);
+        List<Field> thisClassFields = ClassUtils.getClassField(clazz);
+        fields.addAll(superClassFields);
+        fields.addAll(thisClassFields);
         for (Field field : fields) {
             try {
                 addDocumentField(document, field, object);
@@ -52,7 +55,7 @@ public class BsonSerializer extends BsonProcessor {
             return;
         }
 
-        if(ClassUtils.isStaticFinal(field)) {
+        if (isAnnotatedIgnored(field)) {
             return;
         }
 

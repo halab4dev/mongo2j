@@ -57,6 +57,10 @@ public class BsonDeserializer extends BsonProcessor {
     private void setObjectField(Object object, Field field, Document document) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         field.setAccessible(true);
 
+        if (isAnnotatedIgnored(field)) {
+            return;
+        }
+
         if (field.isAnnotationPresent(BsonId.class)) {
             setObjectIdField(object, field, document, ID);
 

@@ -1,5 +1,6 @@
 package com.github.halab4dev.mongo2j.mapper;
 
+import com.github.halab4dev.mongo2j.annotation.BsonIgnore;
 import com.github.halab4dev.mongo2j.annotation.BsonProperty;
 import com.github.halab4dev.mongo2j.util.Validator;
 
@@ -21,6 +22,15 @@ public abstract class BsonProcessor {
         }
         BsonProperty annotation = field.getAnnotation(BsonProperty.class);
         return annotation.isObjectId();
+    }
+
+    /**
+     * Return true if field is annotated with @BsonIgnore
+     * @param field class attribute
+     * @return true if field is annotated with @BsonIgnore
+     */
+    protected boolean isAnnotatedIgnored(Field field) {
+        return field.isAnnotationPresent(BsonIgnore.class);
     }
 
     /**
